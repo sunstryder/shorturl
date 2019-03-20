@@ -31,6 +31,41 @@ app.get('/', function(req, res) {
     });
 });
 
+// post handler for getting url from the front-end.
+app.post('/shorten', function(req, res, next) {
+    console.log(req.body.url);
+    var urlData = req.body.url;
+    // first look for this url in the table to see if it's already been shortened.
+    URL.findOne({ url: urlData}, function (err, doc) {
+        if(doc) {
+            console.log('entry found in DB... fetching now');
+            res.send({
+                url: urlData,
+                // here we fetch the entry by hash.
+                hash: btoa(doc._id),
+                status: 200,
+                statusTxt: 'AITE FAM WE GOOD'
+            });
+        } else {
+            // create a new entry
+            console.log('entry not found in DB. Generating new hash');
+            var url = new URL({
+                url: urlData
+            });
+            url.save(function(err) {
+                // catch the error without continuing save.
+                if(err) return console.error(err);
+                res.send({
+                    url: urlData,
+                    hash: btoa(url._id),
+                    status: 200,
+                    statusTxt: 'U GOOD HOMIE'
+                });
+            });
+        }
+    });
+});
+
 // our first collection stores urls and their ID which is generated.
 var countersSchema = new mongoose.Schema({
     _id: {type: String, required: true },
