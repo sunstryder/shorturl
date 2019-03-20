@@ -64,3 +64,6 @@ urlSchema.pre('save', function(next) {
         }
     );
 });
+
+// creates the second collection which contains incrementing counter
+var URL = mongoose.model('URL', urlSchema);
