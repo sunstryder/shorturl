@@ -57,7 +57,9 @@ urlSchema.pre('save', function(next) {
             if(err) return next(err);
             console.log(counter);
             console.log(counter.count);
+            // auto increment the counter
             doc._id = counter.count;
+            // log the date and time
             doc.created_at = new Date()
             console.log(doc);
             next();
