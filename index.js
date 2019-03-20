@@ -66,6 +66,21 @@ app.post('/shorten', function(req, res, next) {
     });
 });
 
+// redirect users when they feed in a shortened url.
+app.get('/:hash', function(req, res) {
+    var baseid = req.params.hash;
+    var id = atob(baseid);
+    // look for the shortened hash in the table
+    URL.findOne({ _id:id }, function(err, doc) {
+        if(doc) {
+            res.redirect(doc.url);
+        } else {
+            // if nothing is found, direct to home.
+            res.redirect('/');
+        }
+    })
+})
+
 // our first collection stores urls and their ID which is generated.
 var countersSchema = new mongoose.Schema({
     _id: {type: String, required: true },
