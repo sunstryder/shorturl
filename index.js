@@ -69,3 +69,24 @@ urlSchema.pre('save', function(next) {
 
 // creates the second collection which contains incrementing counter
 var URL = mongoose.model('URL', urlSchema);
+
+// this connects to our shared mongodb instance on scalegrid
+promise = mongoose.connect(connectionString, {
+    useMongoClient: true
+});
+
+promise.then(function(db) {
+    console.log('connected successfully');
+    // first param is condition, second param is callback
+    URL.remove({}, function() {
+        console.log('URL collection wiped');
+    })
+    Counter.remove({}, function() {
+        console.log('Counter collection wiped');
+        var counter = new Counter({ _id: 'url_count', count: 10000 });
+        counter.save(function(err) {
+            if(err) return console.error(err);
+            console.log('counter inserted');
+        });
+    });
+});
